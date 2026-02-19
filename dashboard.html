@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MTC Admin</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body>
+
+<div class="sidebar">
+<h2>MTC Admin</h2>
+<button onclick="showAdd()">Add Student</button>
+<button onclick="loadStudents()">Student List</button>
+</div>
+
+<div class="main">
+
+<div id="addSection" class="card">
+<h3>Add Student</h3>
+<input id="name" placeholder="Name">
+<input id="className" placeholder="Class">
+<input id="subject" placeholder="Subject">
+<input id="fees" placeholder="Total Fees">
+<button onclick="addStudent()">Save</button>
+</div>
+
+<div id="listSection" class="card">
+<h3>Student List</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Class</th>
+<th>Fees</th>
+</tr>
+</thead>
+<tbody id="studentTable"></tbody>
+</table>
+</div>
+
+</div>
+
+<script>
+
+const supabase = window.supabase.createClient(
+"https://njdqvislkhcjnuhlpwnb.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qZHF2aXNsa2hjam51aGxwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDQyNDMsImV4cCI6MjA4NzA4MDI0M30.E9FAdUmdqaB9sX8m5ZFs346I6kt2ig-OoDenhWAIbLs"
+);
+
+async function addStudent(){
+let data = {
+student_id: "MTC"+Math.floor(Math.random()*10000),
+name: name.value,
+class: className.value,
+subject: subject.value,
+total_fees: parseInt(fees.value),
+paid: 0,
+result: "",
+attendance: 0,
+pdf: ""
+};
+
+let { error } = await supabase.from('students').insert([data]);
+
+if(error) alert(error.message);
+else{
+alert("Student Added");
+loadStudents();
+}
+}
+
+async function loadStudents(){
+let { data, error } = await supabase.from('students').select("*");
+
+let table="";
+data.forEach(s=>{
+table+=`
+<tr>
+<td>${s.student_id}</td>
+<td>${s.name}</td>
+<td>${s.class}</td>
+<td>${s.paid}/${s.total_fees}</td>
+</tr>`;
+});
+
+studentTable.innerHTML=table;
+}
+
+function showAdd(){
+addSection.style.display="block";
+}
+
+loadStudents();
+
+</script>
+
+</body>
+</html>
