@@ -1,25 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>MTC Classes</title>
-<link rel="stylesheet" href="style.css">
+  <title>MTC Classes</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="center">
+<body>
 
-<div class="card">
-<h1>MTC CLASSES</h1>
+<div class="navbar">
+  <h1>MTC Classes</h1>
+  <div>
+    <a href="index.html">Student</a>
+    <a href="admin.html">Admin</a>
+  </div>
+</div>
 
-<h3>Admin Login</h3>
-<input type="password" id="adminPass" placeholder="Admin Password">
-<button onclick="login()">Login</button>
-
+<div class="container">
+  <h2>Student Login</h2>
+  <input type="text" id="studentId" placeholder="Student ID">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p id="msg"></p>
 </div>
 
 <script>
-function login(){
-if(adminPass.value=="mtcadmin"){
-window.location="dashboard.html";
-}else alert("Wrong Password");
+const supabase = window.supabase.createClient(
+  "https://njdqvislkhcjnuhlpwnb.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qZHF2aXNsa2hjam51aGxwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDQyNDMsImV4cCI6MjA4NzA4MDI0M30.E9FAdUmdqaB9sX8m5ZFs346I6kt2ig-OoDenhWAIbLs"
+);
+
+
+async function login() {
+  const { data, error } = await supabase
+    .from("students")
+    .select("*")
+    .eq("student_id", studentId.value)
+    .eq("password", password.value)
+    .single();
+
+  if (error || !data) {
+    msg.innerText = "Invalid ID or Password!";
+    return;
+  }
+
+  localStorage.setItem("student", JSON.stringify(data));
+  window.location.href = "dashboard.html";
 }
 </script>
 
