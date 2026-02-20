@@ -1,136 +1,180 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>MTC Classes - Admin Panel</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Admin Panel - MTC Classes</title>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      margin: 0;
+      padding: 0;
+      color: white;
+      text-align: center;
+    }
+
+    .container {
+      margin-top: 50px;
+    }
+
+    input {
+      padding: 10px;
+      margin: 8px;
+      width: 250px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 5px;
+      border: none;
+      background: #ff9800;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #e68900;
+    }
+
+    .card {
+      background: white;
+      color: black;
+      padding: 15px;
+      margin: 15px auto;
+      width: 300px;
+      border-radius: 8px;
+    }
+
+  </style>
 </head>
 <body>
 
-<div class="navbar">
-  <h1>MTC Admin Panel</h1>
-</div>
-
 <div class="container">
 
-  <!-- LOGIN SECTION -->
-  <div id="loginSection">
-    <h2>Admin Login</h2>
-    <input type="password" id="adminPass" placeholder="Enter Admin Password">
-    <button onclick="adminLogin()">Login</button>
-  </div>
+  <h1>Admin Login</h1>
 
-  <!-- ADMIN DASHBOARD -->
+  <input type="password" id="adminPass" placeholder="Enter Admin Password">
+  <br>
+  <button onclick="adminLogin()">Login</button>
+
   <div id="adminPanel" style="display:none;">
 
     <h2>Add Student</h2>
-    <input type="text" id="sid" placeholder="Student ID">
-    <input type="text" id="name" placeholder="Name">
-    <input type="text" id="Class" placeholder="Class">
-    <input type="text" id="subject" placeholder="Subject">
-    <input type="number" id="total" placeholder="Total Fees">
-    <input type="number" id="paid" placeholder="Paid Fees">
-    <input type="number" id="attendance" placeholder="Attendance %">
-    <input type="password" id="spass" placeholder="Student Password">
+
+    <input type="text" id="sid" placeholder="Student ID"><br>
+    <input type="text" id="name" placeholder="Name"><br>
+    <input type="text" id="class" placeholder="Class"><br>
+    <input type="text" id="subject" placeholder="Subject"><br>
+    <input type="number" id="total" placeholder="Total Fees"><br>
+    <input type="number" id="paid" placeholder="Paid Fees"><br>
+    <input type="number" id="attendance" placeholder="Attendance %"><br>
+    <input type="password" id="spass" placeholder="Student Password"><br>
+
     <button onclick="addStudent()">Add Student</button>
 
     <hr style="margin:30px 0;">
 
     <h2>All Students</h2>
     <button onclick="loadStudents()">Load Students</button>
+
     <div id="studentList"></div>
 
   </div>
 
 </div>
 
+
 <script>
-const supabase = window.supabase.createClient(
- "https://njdqvislkhcjnuhlpwnb.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qZHF2aXNsa2hjam51aGxwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDQyNDMsImV4cCI6MjA4NzA4MDI0M30.E9FAdUmdqaB9sX8m5ZFs346I6kt2ig-OoDenhWAIbLs"
-);
+
+  // 🔴 YAHAN APNA SUPABASE URL & KEY DALO
+  const supabaseUrl = "https://njdqvislkhcjnuhlpwnb.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qZHF2aXNsa2hjam51aGxwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDQyNDMsImV4cCI6MjA4NzA4MDI0M30.E9FAdUmdqaB9sX8m5ZFs346I6kt2ig-OoDenhWAIbLs";
+
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 
-// ADMIN LOGIN
-function adminLogin() {
-  const password = document.getElementById("adminPass").value;
+  // ADMIN LOGIN
+  function adminLogin() {
+    const pass = document.getElementById("adminPass").value;
 
-  if (password === "admin123") {
-    document.getElementById("loginSection").style.display = "none";
-    document.getElementById("adminPanel").style.display = "block";
-  } else {
-    alert("Wrong Password ❌");
-  }
-}
-
-// ADD STUDENT
-async function addStudent() {
-  const { error } = await supabase.from("students").insert([{
-    student_id: sid.value,
-    name: name.value,
-    Class: Class.value,
-    subject: subject.value,
-    total_fees: total.value,
-    paid_fees: paid.value,
-    attendance: attendance.value,
-    password: spass.value
-  }]);
-
-  if (error) {
-    alert("Error adding student!");
-  } else {
-    alert("Student Added Successfully ✅");
-  }
-}
-
-// LOAD STUDENTS
-async function loadStudents() {
-  const { data, error } = await supabase.from("students").select("*");
-
-  if (error) {
-    alert("Error loading data!");
-    return;
+    if (pass === "admin123") {
+      document.getElementById("adminPanel").style.display = "block";
+    } else {
+      alert("Wrong Password");
+    }
   }
 
-  let html = `
-    <table>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Class</th>
-        <th>Total</th>
-        <th>Paid</th>
-        <th>Action</th>
-      </tr>
-  `;
 
-  data.forEach(student => {
-    html += `
-      <tr>
-        <td>${student.student_id}</td>
-        <td>${student.name}</td>
-        <td>${student.class}</td>
-        <td>₹${student.total_fees}</td>
-        <td>₹${student.paid_fees}</td>
-        <td>
-          <button onclick="deleteStudent('${student.id}')">Delete</button>
-        </td>
-      </tr>
-    `;
-  });
+  // ADD STUDENT
+  async function addStudent() {
 
-  html += "</table>";
+    const sid = document.getElementById("sid").value;
+    const name = document.getElementById("name").value;
+    const classValue = document.getElementById("class").value;
+    const subjectValue = document.getElementById("subject").value;
+    const totalValue = document.getElementById("total").value;
+    const paidValue = document.getElementById("paid").value;
+    const attendanceValue = document.getElementById("attendance").value;
+    const passValue = document.getElementById("spass").value;
 
-  document.getElementById("studentList").innerHTML = html;
-}
+    const { error } = await supabase
+      .from("students")
+      .insert([
+        {
+          student_id: sid,
+          name: name,
+          class: classValue,
+          subject: subjectValue,
+          total_fees: totalValue,
+          paid_fees: paidValue,
+          attendance: attendanceValue,
+          password: passValue
+        }
+      ]);
 
-// DELETE STUDENT
-async function deleteStudent(id) {
-  if (confirm("Delete this student?")) {
-    await supabase.from("students").delete().eq("id", id);
-    loadStudents();
+    if (error) {
+      alert("Error: " + error.message);
+    } else {
+      alert("Student Added Successfully!");
+    }
   }
-}
+
+
+  // LOAD STUDENTS
+  async function loadStudents() {
+
+    const { data, error } = await supabase
+      .from("students")
+      .select("*");
+
+    if (error) {
+      alert("Error loading students");
+      return;
+    }
+
+    let html = "";
+
+    data.forEach(student => {
+      html += `
+        <div class="card">
+          <b>${student.name}</b><br>
+          ID: ${student.student_id}<br>
+          Class: ${student.class}<br>
+          Subject: ${student.subject}<br>
+          Fees: ${student.paid_fees} / ${student.total_fees}<br>
+          Attendance: ${student.attendance}%
+        </div>
+      `;
+    });
+
+    document.getElementById("studentList").innerHTML = html;
+  }
 
 </script>
 
