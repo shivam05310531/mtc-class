@@ -1,1 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
 
+<div class="container">
+  <h2>Admin Login</h2>
+  <input type="password" id="adminPass" placeholder="Admin Password">
+  <button onclick="adminLogin()">Login</button>
+
+  <div id="panel" style="display:none;">
+    <h2>Add Student</h2>
+    <input id="sid" placeholder="Student ID">
+    <input id="name" placeholder="Name">
+    <input id="class" placeholder="Class">
+    <input id="subject" placeholder="Subject">
+    <input id="total" placeholder="Total Fees">
+    <input id="paid" placeholder="Paid Fees">
+    <input id="attendance" placeholder="Attendance">
+    <input id="spass" placeholder="Password">
+    <button onclick="addStudent()">Add</button>
+
+    <h2>All Students</h2>
+    <button onclick="load()">Load Students</button>
+    <div id="list"></div>
+  </div>
+</div>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://njdqvislkhcjnuhlpwnb.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qZHF2aXNsa2hjam51aGxwd25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDQyNDMsImV4cCI6MjA4NzA4MDI0M30.E9FAdUmdqaB9sX8m5ZFs346I6kt2ig-OoDenhWAIbLs"
+);
+
+
+function adminLogin() {
+  if (adminPass.value === "admin123") {
+    panel.style.display = "block";
+  } else alert("Wrong Password");
+}
+
+async function addStudent() {
+  await supabase.from("students").insert([{
+    student_id: sid.value,
+    name: name.value,
+    class: class.value,
+    subject: subject.value,
+    total_fees: total.value,
+    paid_fees: paid.value,
+    attendance: attendance.value,
+    password: spass.value
+  }]);
+  alert("Added");
+}
+
+async function load() {
+  const { data } = await supabase.from("students").select("*");
+  let html = "<table><tr><th>ID</th><th>Name</th><th>Class</th></tr>";
+  data.forEach(s=>{
+    html += `<tr><td>${s.student_id}</td><td>${s.name}</td><td>${s.class}</td></tr>`;
+  });
+  html += "</table>";
+  list.innerHTML = html;
+}
+</script>
+
+</body>
+</html>
