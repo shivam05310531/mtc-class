@@ -68,7 +68,7 @@ async function addStudent() {
   const { error } = await supabase.from("students").insert([{
     student_id: sid.value,
     name: name.value,
-    class: class.value,
+    Class: Class.value,
     subject: subject.value,
     total_fees: total.value,
     paid_fees: paid.value,
